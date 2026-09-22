@@ -1,0 +1,30 @@
+name: Problem with a recipe or the format
+description: A recipe does not parse, a quantity is wrong, or the conventions are unclear.
+labels: ["recipe"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Do not paste a recipe from a book or a website into this issue.** The
+        method and the prose are someone's copyrighted expression; quantities and
+        temperatures are facts and are fine. See CONTRIBUTING.md.
+
+        **Do not include real people's names** — yours or anyone else's.
+  - type: checkboxes
+    id: rules
+    attributes:
+      label: Before submitting
+      options:
+        - label: No copyrighted recipe text, and no real people's names.
+          required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What is wrong
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: Output of `make check`, if relevant
+      render: shell

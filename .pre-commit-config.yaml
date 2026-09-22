@@ -1,0 +1,33 @@
+# Install with `pre-commit install`, or `make setup`.
+# Never bypass these with `git commit --no-verify`.
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        # Nothing here is legitimately large. A photograph is.
+        args: ["--maxkb=256"]
+      - id: check-merge-conflict
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+
+  - repo: local
+    hooks:
+      - id: no-private-dir
+        name: refuse files under private/
+        entry: python3 -m tools.no_private_dir
+        language: system
+        pass_filenames: true
+
+      - id: check-recipes
+        name: parse recipes and validate front matter
+        entry: python3 -m tools.check_recipes
+        language: system
+        files: \.cook$
+        pass_filenames: true
+
+      - id: scan-personal
+        name: scan for personal data
+        entry: python3 -m tools.scan_personal
+        language: system
+        pass_filenames: true

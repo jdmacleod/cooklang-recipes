@@ -1,0 +1,12 @@
+# Salted SHA-256 of every literal denylist entry. Committed on purpose.
+#
+# The salt is NOT in this file. It lives in tools/denylist.salt, which is
+# gitignored, and in the RECIPES_DENYLIST_SALT repository secret. Without it
+# these digests are inert. See tools/denylist.py and SECURITY.md.
+#
+# Regenerate with: python3 -m tools.denylist --write
+# Columns: <entry length> <digest>. Sorted, so the order says nothing.
+version 1
+# pii-scan: allow public canary, named below so CI can prove the tier runs
+canary recipes-denylist-canary-do-not-remove
+37 118aada3d21b3cd453894b68ab29bede44c476d287f558ce70c064736d5eaa94

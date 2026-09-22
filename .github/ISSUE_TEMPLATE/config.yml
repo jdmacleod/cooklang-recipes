@@ -1,0 +1,7 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Privacy issue
+    url: https://github.com/jdmacleod/cooklang-recipes/security/advisories/new
+    about: >-
+      Report privately if you believe a real person's name, contact details, or
+      household information has been committed here.

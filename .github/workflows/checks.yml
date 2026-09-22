@@ -1,0 +1,67 @@
+name: Checks
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Recipes and privacy
+    runs-on: ubuntu-latest
+    env:
+      RECIPES_DENYLIST_SALT: ${{ secrets.RECIPES_DENYLIST_SALT }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262  # v4
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065  # v5
+        with:
+          python-version: "3.12"
+
+      # The names tier keys on a salt this repository never stores. Without the
+      # secret — a fork's pull request, for instance — only the rules tier runs,
+      # which is the same downgrade the scanner reports locally.
+      - name: Prove the denylist digests and the salt agree
+        if: env.RECIPES_DENYLIST_SALT != ''
+        run: python -m tools.denylist --self-test
+
+      - name: Report which denylist tier is running
+        run: python -m tools.denylist --status
+
+      - name: Parse every recipe
+        run: python -m tools.check_recipes
+
+      - name: Scan for personal data
+        run: python -m tools.scan_personal
+
+      - name: Refuse tracked files under private/
+        run: |
+          tracked=$(git ls-files -- private || true)
+          if [ -n "$tracked" ]; then
+            echo "Tracked files under private/:"; echo "$tracked"; exit 1
+          fi
+
+      - name: Refuse image and export files
+        run: |
+          # Mirrors the denials in .gitignore. A photograph of a dish is a
+          # photograph of a kitchen, and no scanner can read pixels.
+          stray=$(git ls-files \
+            '*.png' '*.jpg' '*.jpeg' '*.heic' '*.heif' '*.webp' '*.gif' \
+            '*.tif' '*.tiff' '*.bmp' '*.pdf' \
+            '*.csv' '*.tsv' '*.xls' '*.xlsx' '*.zip' '*.tar' '*.tar.gz' '*.tgz' \
+            '*.json' '*.sqlite' '*.sqlite3' '*.db' \
+            '*.paprikarecipes' '*.paprikarecipe' '*.mxp' '*.mx2' || true)
+          if [ -n "$stray" ]; then
+            echo "Data-shaped files committed:"; echo "$stray"; exit 1
+          fi
+
+      - name: Refuse re-inclusions in .gitignore
+        run: |
+          # There are none, and adding one is the whole failure mode.
+          bad=$(grep -E '^!' .gitignore || true)
+          if [ -n "$bad" ]; then
+            echo "Unexpected re-inclusion in .gitignore:"; echo "$bad"; exit 1
+          fi

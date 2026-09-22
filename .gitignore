@@ -1,0 +1,58 @@
+# ---------------------------------------------------------------------------
+# Deny by default.
+#
+# This repository is public. It holds a synthetic example corpus — invented
+# recipes, written to demonstrate the format and to exercise Kitchen ERP's
+# indexer. The household's real recipes live under private/, which never leaves
+# the machine, because a recipe collection identifies a household through names,
+# occasions, and dietary restrictions more surely than an address does.
+# ---------------------------------------------------------------------------
+
+# Real recipes, and anything else that is nobody else's business. Git will not
+# descend into an excluded directory, so nothing below this can be re-included.
+/private/
+
+# The scanner's literal denylist is itself a personal-data file, and the salt
+# that keys its digests is what keeps tools/denylist.hashes inert in public.
+tools/denylist.txt
+tools/denylist.salt
+
+# Photographs. A picture of a dish on a kitchen table shows the kitchen.
+*.png
+*.jpg
+*.jpeg
+*.heic
+*.heif
+*.webp
+*.gif
+*.tif
+*.tiff
+*.bmp
+*.pdf
+
+# Exports and scrapes from recipe apps, which arrive full of personal notes.
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.zip
+*.tar
+*.tar.gz
+*.tgz
+*.json
+*.sqlite
+*.sqlite3
+*.db
+*.paprikarecipes
+*.paprikarecipe
+*.mxp
+*.mx2
+
+# Ordinary noise
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.DS_Store
+.idea/
+.vscode/
