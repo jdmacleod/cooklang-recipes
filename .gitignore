@@ -1,11 +1,10 @@
 # ---------------------------------------------------------------------------
 # Deny by default.
 #
-# This repository is public. It holds a synthetic example corpus — invented
-# recipes, written to demonstrate the format and to exercise Kitchen ERP's
-# indexer. The household's real recipes live under private/, which never leaves
-# the machine, because a recipe collection identifies a household through names,
-# occasions, and dietary restrictions more surely than an address does.
+# This repository is public and holds a household's real recipes, on purpose.
+# What it must not carry is other people's details — the names of relatives and
+# friends, contact details, addresses — and anything the household would rather
+# keep, which goes under private/. See SECURITY.md.
 # ---------------------------------------------------------------------------
 
 # Real recipes, and anything else that is nobody else's business. Git will not

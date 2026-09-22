@@ -40,9 +40,20 @@ KNOWN_KEYS = {
     "title", "source", "servings", "tags", "notes", "course", "time", "author",
 }
 
-# The phrase a wholly original recipe uses. Anything else in `source` is read as
-# an attribution and has to name something.
-INVENTED = "invented for this repository"
+# Phrases that mean "this one is ours". Anything else in `source` is read as an
+# attribution to someone else, and has to name them.
+ORIGINAL = frozenset(
+    {
+        "invented for this repository",
+        "family recipe",
+        "our own",
+        "my own",
+        "original",
+    }
+)
+
+# Values that look like an attribution but name nobody.
+EMPTY_ATTRIBUTION = frozenset({"adapted", "family", "unknown", "n/a", "-", "none"})
 
 FRONT_MATTER_FENCE = "---"
 
@@ -126,16 +137,16 @@ def check_front_matter(data: dict, path: str) -> list[Problem]:
             problems.append(Problem(path, 1, f"front matter is missing {key!r}"))
 
     source = str(data.get("source", "")).strip()
-    if source and source.lower() != INVENTED:
+    if source and source.lower() not in ORIGINAL:
         # An attribution has to name something. "adapted" on its own does not
         # tell a reader whose words they are reading.
-        if len(source) < 8 or source.lower() in {"adapted", "family", "unknown", "n/a"}:
+        if len(source) < 8 or source.lower() in EMPTY_ATTRIBUTION:
             problems.append(
                 Problem(
                     path,
                     1,
-                    f"source {source!r} names nothing. Either write "
-                    f"'{INVENTED.capitalize()}' or credit the original "
+                    f"source {source!r} names nothing. Say it is yours "
+                    f"({', '.join(sorted(ORIGINAL))}), or credit the original "
                     "(title, author, where it was published). See CONTRIBUTING.md.",
                 )
             )

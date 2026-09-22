@@ -2,8 +2,9 @@
 """Refuse to commit anything under private/.
 
 `.gitignore` already denies it, but `git add -f` overrides `.gitignore` and a
-commit hook does not. This is the second line: real family recipes, the ones with
-names and occasions in them, live under private/ and never leave the machine.
+commit hook does not. This is the second line under the opt-out: the recipes this
+household has chosen not to publish live in private/ and never leave the machine,
+while Kitchen ERP still indexes them from there.
 
 Invoked by pre-commit with the staged paths.
 """
@@ -24,8 +25,9 @@ def main(argv: list[str]) -> int:
     for p in bad:
         print(f"  {p}", file=sys.stderr)
     print(
-        "\nprivate/ is where real recipes live. If this file is synthetic and"
-        "\nbelongs in the public corpus, move it under recipes/ instead.",
+        "\nprivate/ is for the recipes this household does not publish. Kitchen ERP"
+        "\nindexes them from there exactly the same way. If this one is meant to be"
+        "\npublished, move it under recipes/ instead.",
         file=sys.stderr,
     )
     return 1

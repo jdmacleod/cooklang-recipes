@@ -10,7 +10,10 @@ under `private/`, and one scans for the personal data a recipe collection leaks.
 
 ## Recipes and copyright — read this before adding one
 
-This is the part people get wrong, so it is first.
+This is the part people get wrong, so it is first. It matters more here than in
+most recipe repositories, because this one is public and MIT-licensed: anything
+committed is offered to strangers for reuse, and it is not yours to offer unless
+it is yours.
 
 In the United States, **a list of ingredients is not copyrightable**, and neither
 is a bare functional procedure. *Publications International v. Meredith* (7th
@@ -35,24 +38,33 @@ So, for anything that did not originate with you:
 - When in doubt, leave it in `private/`. Nothing is lost: Kitchen ERP indexes
   `private/` exactly the same way.
 
-`source` is a required field and the checker enforces it. `Invented for this
-repository` is the value for something original. Anything else has to actually
-name something — `adapted` or `family` on its own will fail the check, because
-they tell a reader nothing about whose words they are reading.
+`source` is a required field and the checker enforces it. For a recipe that is
+your own, `Family recipe`, `Our own`, or `Invented for this repository` all pass.
+Anything else has to actually name something — `adapted` or `family` on its own
+will fail, because they tell a reader nothing about whose words they are reading.
 
-## No real people
+## Other people's names
 
-The public corpus has no real names in it. Not in a title, not in `source`, not
-in a note. "Grandma Edith's pie" names a living or once-living person in a public
-repository, and "made this for Tom's birthday" says who was in the house and
-when.
+These recipes are published. Yours are yours to publish; the people around you
+did not make that choice.
 
-If a recipe genuinely came from a relative and you want to keep that, it belongs
-in `private/`. The synthetic corpus exists to demonstrate the format, and it does
-that just as well with an invented name.
+So: no real names, in a title, in `source`, or in a note. "Grandma Edith's pie"
+publishes a real person's name and her relationship to you, permanently, in a
+file that will outlive your interest in the pie. "Made this for Tom's birthday"
+says who was in the house and when. Write the first as "Grandma's pie" — the
+recipe is unchanged — and leave the second out.
 
-Add the names you care about to `tools/denylist.txt` — gitignored — so the
-scanner catches the mistake instead of a stranger doing it for you. See
+The same goes for contact details, addresses, coordinates, links into private
+storage, and anyone else's dietary or health information. Your own allergy is
+yours to write down. Somebody else's is not.
+
+If a recipe carries a story you want to keep but not publish, put the whole thing
+in `private/`. It is gitignored and hook-refused, and Kitchen ERP still indexes
+it, costs it, and shows it exactly like a published one. Nothing is lost.
+
+**Fill in `tools/denylist.txt`.** It is gitignored, and until it has names in it
+the scanner cannot catch any of this — a name is not a pattern, and no rule can
+tell that "Edith" is your grandmother rather than a variety of apple. See
 SECURITY.md.
 
 ## Writing a recipe

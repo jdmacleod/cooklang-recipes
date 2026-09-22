@@ -1,38 +1,52 @@
 # Privacy and this repository
 
-A recipe collection is not obviously personal data, which is exactly what makes
-it worth writing this down.
+**These are a real household's recipes, published on purpose.** That is the
+owner's decision and it is not the thing this document is here to argue with.
+What it is here for is the part that decision does *not* cover.
 
-A receipt identifies a household through numbers — a loyalty card, an address, a
-coordinate. A recipe collection identifies it through *people and occasions*.
-Who the dish is named after. Who was at the table. Whose allergy the substitution
-is for. What the household eats every week, and what it stopped eating in March.
-None of that looks like a pattern, and none of it can be caught by a rule that
-looks for digits.
+Publishing what you cook discloses more than a list of dishes. Taken as a
+collection rather than one file at a time, a recipe repository says roughly how
+many people eat here (servings), what they cannot eat (substitutions and
+omissions), what they observe (what is never present), when the household is
+busy (what is tagged weeknight), and how all of that changes over time, because
+git keeps every version. None of that is dangerous on its own. All of it is
+worth having decided rather than discovered.
 
-So the line here is drawn by directory, not by cleverness:
+The rule that follows:
 
-**`recipes/` is public and entirely invented. `private/` is real and never leaves
-the machine.**
+**Publishing your own cooking is your call. Publishing somebody else's details
+is not.**
 
-## What lives where
+## What must not be committed, regardless
 
-| | `recipes/` | `private/` |
-|---|---|---|
-| Committed | Yes | Never |
-| Content | Recipes written for this repository | The household's own recipes |
-| Names of real people | Never | However you like |
-| Notes about occasions, guests, health | Never | However you like |
+A recipe you own can still carry things that belong to other people. These never
+go in, and the scanner looks for them on every commit:
 
-`private/` is denied in `.gitignore`, and `tools/no_private_dir.py` refuses any
-staged path under it even via `git add -f`, because `.gitignore` alone does not
-survive a `-f`. Kitchen ERP scans for `*.cook` anywhere under the mount, so a
-recipe in `private/` works in the application exactly like a public one. It is
-simply not published.
+- **Other people's names.** The relative a dish came from, the friend who
+  brought it, the guest it was made for. "Grandma Edith's pie" publishes a real
+  person's name and her family connection to you, in a file that outlives your
+  interest in the recipe. Write it as "Grandma's pie" and put the rest in
+  `private/`, or in nothing at all.
+- **Contact details.** Email addresses, phone numbers — yours or anyone's.
+- **Addresses and coordinates.** A street address or a lat/long pair identifies a
+  household as surely as a name does, and better.
+- **Links into private storage.** A Google Photos or Dropbox link is unlisted,
+  not private, and it stops being either once it is in a public repository.
+- **Health and dietary information about other people.** Your own allergy is
+  yours to publish. Somebody else's is not.
 
-If you would rather not have real recipes in the same checkout as a public
-repository at all, keep them in a separate private repository and point
-`RECIPES_PATH` at that instead. Nothing here depends on the two being together.
+## `private/`
+
+`private/` is the opt-out. Anything in it is gitignored, refused by a commit hook
+even under `git add -f`, and never published — while still being indexed by
+Kitchen ERP exactly like a public recipe, because the application scans for
+`*.cook` anywhere under the mount.
+
+Use it for the recipes you would rather not publish: the ones with another
+person's name on them, the ones that carry a story you do not want indexed, the
+ones that are somebody else's to share. Nothing is lost by putting a recipe
+there — it still costs out, still resolves its ingredients, still appears in the
+application. It simply is not on the internet.
 
 ## What the scanner covers
 
@@ -45,14 +59,28 @@ repository at all, keep them in a separate private repository and point
 | `EMAIL` | Any address outside `example.com`/`.org`/`.net`. |
 | `PHONE` | Any number outside the reserved 555 exchange. |
 | `STREET` | Numbered street addresses. |
-| `COORDS` | Coordinate pairs, which identify a household as surely as an address. |
+| `COORDS` | Coordinate pairs. |
 | `LOCAL_PATH` | Absolute paths under a home directory, which leak the account name. |
-| `PRIVATE_URL` | Links into Google Photos, Drive, iCloud, Dropbox, OneDrive, Notion. Unlisted is not private once the link is in a public repository. |
+| `PRIVATE_URL` | Links into Google Photos, Drive, iCloud, Dropbox, OneDrive, Notion. |
 
-**A literal denylist**, for what does not: the names of the people who cook here,
-the friends and relatives a recipe is credited to, and their contact details.
-This is the tier that matters most and the only one that can catch "Grandma
-Edith's pie".
+**A literal denylist**, for what does not look like a pattern: the names of the
+people around this household, and their contact details.
+
+> **This tier is the one that matters, and it does nothing until you fill it in.**
+> A name is not a pattern. No rule can tell that "Edith" is your grandmother
+> rather than a variety of apple. If `tools/denylist.txt` is empty, the scanner
+> cannot catch the single most likely way a real recipe collection exposes
+> somebody — and in a public repository of real recipes, that is the whole risk.
+
+```bash
+cp tools/denylist.example.txt tools/denylist.txt   # gitignored
+$EDITOR tools/denylist.txt                          # one name per line
+make denylist                                       # regenerates the digests
+```
+
+Put in the first names and surnames of everyone in the household, and of the
+relatives and friends whose recipes are in here. Prefer a distinctive name over a
+very common one, which will match constantly and teach you to suppress the rule.
 
 The names themselves are never committed. `tools/denylist.txt` is gitignored;
 `tools/denylist.hashes` **is** committed and holds a salted SHA-256 of each
@@ -64,21 +92,13 @@ a deliberate downgrade rather than a failure. A public canary string in the file
 is checked on every run, so a mistyped secret fails loudly instead of looking
 like a clean scan.
 
-Start it with:
-
-```bash
-cp tools/denylist.example.txt tools/denylist.txt   # gitignored
-$EDITOR tools/denylist.txt                          # one name per line
-make denylist                                       # regenerates the digests
-```
-
 ## Suppressions
 
 A finding that is genuinely benign is suppressed one line at a time, with a
 reason written down:
 
 ```cook
-A dish we first had at Cafe Verano.  -- scan: allow invented place
+A dish we first had at Cafe Verano.  -- scan: allow restaurant, not a person
 ```
 
 Never suppress a whole file, never disable a rule to make CI green, and never
@@ -88,13 +108,20 @@ commit with `--no-verify`.
 
 Every image format is denied in `.gitignore`. No scanner can read pixels, and a
 photograph of a finished dish on a kitchen table is a photograph of a kitchen,
-often with a window in it. If this repository ever wants images, they come from
-somewhere that was staged for the purpose, and the denial is lifted with a check
-attached — not quietly.
+usually with a window and often with a person in it. If this repository ever
+wants images, the denial is lifted with a check attached — not quietly.
 
-## If something real has been committed
+## Git remembers
 
-Stop. Do not push. Do not try to rewrite history alone — removing a file from
-history needs `git filter-repo` and a forced push that every clone has to
-follow. Raise it through GitHub's private vulnerability reporting on this
-repository.
+Everything here is permanent once pushed. A recipe you publish and later delete
+stays in history, and so does a name you committed and then edited out. Removing
+something for real needs `git filter-repo` and a forced push that every clone has
+to follow.
+
+So: if you are unsure about a file, it goes in `private/` first. Moving a recipe
+from `private/` to `recipes/` later is one `git mv`. Moving it back is not.
+
+## If something has been committed that should not have been
+
+Stop. Do not push. Do not try to rewrite history alone. Raise it through GitHub's
+private vulnerability reporting on this repository.

@@ -14,7 +14,7 @@ a pattern, so this scanner has two tiers and the second one matters more:
    run it too. See `tools/denylist.py` and SECURITY.md.
 
 The `private/` directory is skipped entirely. It is gitignored, refused by a
-commit hook, and is where real family recipes live.
+commit hook, and is where the recipes this household does not publish live.
 
 False positives are suppressed one line at a time, with a reason:
 
@@ -206,6 +206,18 @@ def main(argv: list[str] | None = None) -> int:
             else "  (NO DENYLIST — the names tier is not running; see SECURITY.md)"
         )
         print(f"scan_personal: clean — {len(paths)} path(s){note}")
+        # A denylist holding nothing but the canary passes every scan and proves
+        # nothing. In a public repository of real recipes that is the gap that
+        # matters, so say so rather than letting a green check imply otherwise.
+        if 0 < denylist.size <= 1:
+            print(
+                "scan_personal: WARNING — the names tier holds only the canary, "
+                "so no person's name is being checked for.\n"
+                "  Add the household's names, and those of anyone whose recipes "
+                "are here, to tools/denylist.txt\n"
+                "  (it is gitignored) and run `make denylist`. See SECURITY.md.",
+                file=sys.stderr,
+            )
         return 0
 
     print(f"scan_personal: {len(findings)} finding(s)\n", file=sys.stderr)

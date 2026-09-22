@@ -6,11 +6,21 @@
 Plain-text recipes in [Cooklang](https://cooklang.org), laid out the way
 [Kitchen ERP](https://github.com/jdmacleod/kitchen-erp) expects to find them.
 
-**What is in here is a synthetic example corpus.** Every recipe is invented — for
-this repository, to demonstrate the format and to give the indexer something real
-to chew on. None of it is anybody's family recipe. A household's actual recipes
-live in `private/`, which is gitignored, refused by a commit hook, and never
-leaves the machine. `SECURITY.md` explains why that line is drawn where it is.
+This is a household's real recipe collection, published on purpose. Everything
+under `recipes/` is meant to be read, cooked, and copied — that is what the MIT
+licence is for.
+
+Two things it deliberately does not carry. **Other people's details**: names of
+relatives and friends, contact details, addresses. Publishing your own cooking is
+your call; publishing somebody else's name is not. And **anything you would
+rather keep**, which goes in `private/` — gitignored, refused by a commit hook,
+and still indexed by Kitchen ERP exactly like a published recipe. Read
+[`SECURITY.md`](SECURITY.md) before your first commit; the names scanner it
+describes does nothing until you fill it in.
+
+The recipes here at the start are written-for-the-repository examples, kept so
+the format has something to demonstrate and the checks have something to run
+against. Delete them as your own accumulate.
 
 ## The format
 

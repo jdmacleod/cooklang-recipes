@@ -1,7 +1,8 @@
 # Copy to tools/denylist.txt (which is gitignored) and add one entry per line.
 #
 # These are the literal strings that must never appear anywhere in this public
-# repository. For a recipe collection that means people, not numbers:
+# repository. The recipes here are real and published on purpose; the people
+# around them did not choose that. So this list is about people, not numbers:
 #
 #   - The first names and surnames of everyone in the household.
 #   - The names of friends and relatives a recipe is named after or credited to.
