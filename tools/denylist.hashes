@@ -9,4 +9,6 @@
 version 1
 # pii-scan: allow public canary, named below so CI can prove the tier runs
 canary recipes-denylist-canary-do-not-remove
+13 d47ce0dd94827e033add392a9bbaaf816998a6170395c52b742430ccf9266f2a
+14 ea7bfe02d56a4946c60c3127a538034b0cbd6f71d782ba4b9ef7c66db069a15c
 37 118aada3d21b3cd453894b68ab29bede44c476d287f558ce70c064736d5eaa94

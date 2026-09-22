@@ -56,6 +56,13 @@ SELF_DOCUMENTING = {
     "CONTRIBUTING.md",
 }
 
+# The one place the copyright holder's own name is required rather than leaked:
+# an MIT licence that does not name its holder is not an MIT licence, and the
+# name is already public in every commit's authorship. Only the names tier stands
+# down here — the rules tier still runs, so an address or a phone number added to
+# this file is still caught.
+NAME_EXPECTED = {"LICENSE"}
+
 
 @dataclass(frozen=True)
 class Finding:
@@ -144,13 +151,15 @@ def suppressed(line: str, preceding: str = "") -> bool:
 def scan_lines(lines: list[str], origin: str, denylist: Denylist) -> list[Finding]:
     found: list[Finding] = []
     apply_rules = origin not in SELF_DOCUMENTING
+    apply_names = origin not in NAME_EXPECTED
     for idx, line in enumerate(lines, start=1):
         if suppressed(line, lines[idx - 2] if idx > 1 else ""):
             continue
-        for matched in denylist.find(line.lower()):
-            found.append(
-                Finding(origin, idx, "DENYLIST", matched, "Literal string from the denylist.")
-            )
+        if apply_names:
+            for matched in denylist.find(line.lower()):
+                found.append(
+                    Finding(origin, idx, "DENYLIST", matched, "Literal string from the denylist.")
+                )
         if not apply_rules:
             continue
         for rule in RULES:
