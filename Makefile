@@ -17,6 +17,12 @@ check-recipes:  ## Parse every recipe and validate its front matter
 check-personal:  ## Scan for names, contacts, addresses, and private links
 	$(PY) -m tools.scan_personal
 
+check-markdown:  ## Lint the documentation for style and dead relative links
+	$(PY) -m tools.check_links
+	@command -v pymarkdown >/dev/null 2>&1 \
+	  && pymarkdown --config .pymarkdown scan $$(git ls-files '*.md' | grep -v '^\.github/') \
+	  || echo "  (pymarkdown not on PATH; pre-commit and CI run it. pipx install pymarkdownlnt)"
+
 check-denylist:  ## Verify the committed digests and the salt agree
 	$(PY) -m tools.denylist --self-test
 
@@ -26,5 +32,6 @@ denylist:  ## Regenerate tools/denylist.hashes from tools/denylist.txt
 check:  ## Everything CI runs
 	$(PY) -m tools.denylist --self-test
 	$(PY) -m tools.check_recipes
+	$(PY) -m tools.check_links
 	$(PY) -m tools.scan_personal
 	pre-commit run --all-files

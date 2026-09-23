@@ -30,6 +30,9 @@ tools/denylist.salt
 *.pdf
 
 # Exports and scrapes from recipe apps, which arrive full of personal notes.
+# Note the breadth of *.json: the Markdown linter's config is therefore called
+# .pymarkdown, with no extension, so that it stays tracked. There are no
+# re-inclusions in this file and CI fails if one appears.
 *.csv
 *.tsv
 *.xls
