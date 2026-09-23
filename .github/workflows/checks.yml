@@ -34,6 +34,18 @@ jobs:
       - name: Parse every recipe
         run: python -m tools.check_recipes
 
+      - name: Check relative links resolve
+        run: python -m tools.check_links
+
+      - name: Lint the documentation
+        # Run through pre-commit rather than pip-installing the linter here, so
+        # the pinned version and the .github/ exclusion have exactly one home.
+        # Two copies of a pin are two pins that drift, and the day they disagree
+        # is the day a hook passes locally and the branch goes red.
+        run: |
+          pip install --disable-pip-version-check --quiet pre-commit
+          pre-commit run pymarkdown --all-files --show-diff-on-failure
+
       - name: Scan for personal data
         run: python -m tools.scan_personal
 

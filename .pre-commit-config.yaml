@@ -11,8 +11,32 @@ repos:
       - id: end-of-file-fixer
       - id: trailing-whitespace
 
+  - repo: https://github.com/jackdewinter/pymarkdown
+    rev: v0.9.40
+    hooks:
+      - id: pymarkdown
+        # Style only: heading levels, list markers, fenced blocks having a
+        # language, an 80-column line. Settings live in .pymarkdown, which is
+        # JSON despite the extensionless name: .gitignore denies *.json, so a
+        # file called .pymarkdown.json would be silently untracked and CI would
+        # run with the defaults instead. Do not "fix" the name.
+        #
+        # .github/ is excluded on purpose. Those files are fragments GitHub
+        # injects into a form, not documents: a pull request template that
+        # opened with an H1 to satisfy "first line is a top-level heading"
+        # would render a banner headline inside every pull request.
+        args: ["--config", ".pymarkdown", "scan"]
+        exclude: ^\.github/
+
   - repo: local
     hooks:
+      - id: check-links
+        name: check relative links resolve
+        entry: python3 -m tools.check_links
+        language: system
+        files: \.md$
+        pass_filenames: true
+
       - id: no-private-dir
         name: refuse files under private/
         entry: python3 -m tools.no_private_dir

@@ -56,7 +56,7 @@ this repository is ever written to by the application.
 
 ## Layout
 
-```
+```text
 recipes/
   baking/
   basics/
@@ -83,8 +83,14 @@ make check     # everything CI runs
 - `make check-personal` scans for the things a recipe collection leaks: email
   addresses, phone numbers, street addresses, coordinates, links into private
   storage, and a local denylist of names.
+- `make check-markdown` keeps the documentation honest: heading levels, list
+  markers, fenced blocks carrying a language, an 80-column line, and every
+  relative link resolving to a file that exists. A renamed file otherwise
+  leaves a dead link that GitHub renders as ordinary blue text.
 
-No dependencies. Python 3 and git, nothing else.
+The repository's own tools need Python 3 and git, nothing else. The Markdown
+linter is the one thing from outside, and pre-commit installs it into its own
+environment rather than yours.
 
 ## Using it with Kitchen ERP
 

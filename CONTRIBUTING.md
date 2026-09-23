@@ -101,9 +101,14 @@ Add the @carrots{500%g}, sliced into coins, with @water{100%ml} and a pinch of
 make check
 ```
 
-That parses every recipe, validates the front matter, and runs the personal-data
-scanner. The hooks run the same things, so a clean `make check` means a clean
-commit. Never `--no-verify`.
+That parses every recipe, validates the front matter, runs the personal-data
+scanner, and lints the documentation. The hooks run the same things, so a clean
+`make check` means a clean commit. Never `--no-verify`.
+
+If you edit the Markdown: wrap at 80 columns, give every fenced block a language
+(`cook`, `bash` or `text`), and let heading levels increase one at a time.
+Relative links are checked too, including `#anchors`, so renaming a heading that
+another document points at fails rather than rotting quietly.
 
 ## Licence
 

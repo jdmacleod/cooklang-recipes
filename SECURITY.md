@@ -60,8 +60,8 @@ application. It simply is not on the internet.
 | `PHONE` | Any number outside the reserved 555 exchange. |
 | `STREET` | Numbered street addresses. |
 | `COORDS` | Coordinate pairs. |
-| `LOCAL_PATH` | Absolute paths under a home directory, which leak the account name. |
-| `PRIVATE_URL` | Links into Google Photos, Drive, iCloud, Dropbox, OneDrive, Notion. |
+| `LOCAL_PATH` | Home-directory paths, which leak the account name. |
+| `PRIVATE_URL` | Links into Google, iCloud, Dropbox, OneDrive or Notion. |
 
 **A literal denylist**, for what does not look like a pattern: the names of the
 people around this household, and their contact details.
