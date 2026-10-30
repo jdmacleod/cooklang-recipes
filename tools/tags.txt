@@ -1,0 +1,85 @@
+# The tag vocabulary. One tag per line, lowercase; `#` starts a comment.
+#
+# The folder says what course a recipe is, so tags say everything else, in a
+# few kinds below. tools/check_recipes.py warns on a tag that is not here: add
+# it if it is meant, so the next recipe spells the idea the same way. A tag
+# that names one dish ("snickerdoodle cookies") is a title, not a tag.
+
+# Cuisine. A recipe's single main cuisine also goes in `cuisine:`.
+american
+chinese
+ethiopian
+french
+greek
+indian
+italian
+japanese
+korean
+lao
+lebanese
+mediterranean
+mexican
+middle eastern
+sichuan
+thai
+
+# Diet
+dairy-free
+gluten-free
+vegan
+vegetarian
+
+# Main ingredient, where the folder does not already say it
+beef
+chicken
+duck
+lamb
+pork
+seafood
+
+# Method
+braise
+grill
+no-knead
+one-pot
+sheet-pan
+slow-cooker
+smoker
+stir-fry
+
+# Occasion and timing
+holiday
+make-ahead
+quick
+weekend
+weeknight
+
+# Season and holiday
+spring
+summer
+fall
+winter
+christmas
+easter
+fourth of july
+hanukkah
+lunar new year
+passover
+thanksgiving
+
+# Cocktails: the base spirit or style
+cocktail
+amaretto
+aperitivo
+brandy
+cachaca
+gin
+mezcal
+pisco
+rum
+scotch
+sherry
+sparkling
+tequila
+vodka
+whiskey

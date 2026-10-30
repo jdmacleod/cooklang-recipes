@@ -46,7 +46,9 @@ Add the @yellow onion{1}, diced, and cook ~{8%minutes} until soft.
 - `--` starts a comment to the end of the line.
 
 Front matter takes `title` and `source` (both required), and optionally
-`servings`, `tags`, `notes`, `course`, `time`, and `author`. There is **no id
+`servings`, `tags`, `cuisine`, `notes`, `course`, `time`, `yield`, `nutrition`,
+and `author`. Tags come from the vocabulary in
+[`tools/tags.txt`](tools/tags.txt). There is **no id
 field**: a recipe is identified by its path, and Kitchen ERP follows renames
 through git history rather than by writing anything into the file. Nothing in
 this repository is ever written to by the application.
@@ -58,13 +60,22 @@ this repository is ever written to by the application.
 
 ```text
 recipes/
-  baking/
-  basics/
-  mains/
+  baking/         breads/ cakes/ cookies/ pies-and-tarts/
+  basics/         eggs, dressings, stocks, doughs: what other recipes use
+  breakfast/
+  cocktails/
+  mains/          meat/ pasta/ pizza/ poultry/ sandwiches/ seafood/ thai/
+  sauces/
   sides/
-private/          gitignored: real recipes, never committed
+  soups/          soups, stews and chilis
+private/          gitignored: recipes you keep to yourself
 tools/            the checks
 ```
+
+The folder is the course, then the kind of dish; cuisine, diet, method and
+occasion go in `tags`. Kitchen ERP's recipe list searches by title and path, so
+the folders are how you find things there too. A recipe made of parts, like a
+sourdough starter and its loaf, can be a folder of `.cook` files.
 
 The directories are for humans. Kitchen ERP scans for `*.cook` anywhere under the
 root, so you can reorganise freely; it follows the move through git history and
@@ -80,6 +91,9 @@ make check     # everything CI runs
 - `make check-recipes` parses every file, validates the front matter, and fails
   on a malformed quantity or an unbalanced brace. A recipe that does not parse
   does not cost anything in Kitchen ERP, so it is worth catching here.
+- `make check-images` checks recipe photos: your own, named after their
+  recipe, small, and with no EXIF, XMP or IPTC block. `make strip-images`
+  removes those blocks.
 - `make check-personal` scans for the things a recipe collection leaks: email
   addresses, phone numbers, street addresses, coordinates, links into private
   storage, and a local denylist of names.

@@ -33,8 +33,9 @@ So, for anything that did not originate with you:
   Attribution is not a licence — it does not make copying lawful — but a recipe
   you rewrote and credited is both honest and legal, and the credit is how a
   reader finds the original.
-- **A photograph is never fair game**, and every image format is gitignored here
-  anyway.
+- **Someone else's photograph is never fair game.** Not the site's photo, and not
+  an `image:` link to it either; the checker refuses that key. Your own photo
+  of your own cooking is welcome (see "Photos" below).
 - When in doubt, leave it in `private/`. Nothing is lost: Kitchen ERP indexes
   `private/` exactly the same way.
 
@@ -73,7 +74,7 @@ SECURITY.md.
 ---
 title: Braised carrots
 servings: 4
-tags: [side, vegetarian]
+tags: [vegetarian]
 source: Invented for this repository
 ---
 
@@ -94,6 +95,35 @@ Add the @carrots{500%g}, sliced into coins, with @water{100%ml} and a pinch of
   `cup`, `oz`, `lb`, or a count. A measure word like `cloves` is fine as text.
 - One recipe per file. Filenames are kebab-case and are the recipe's identity, so
   renaming one is a real change — git tracks the move and Kitchen ERP follows it.
+
+### Where it goes, and its tags
+
+The folder is the course, then the kind of dish: `mains/pasta/`,
+`baking/cookies/`, `soups/`. The README lists them. Make a new sub-folder when a
+kind of dish has a handful of recipes, not before.
+
+Tags say everything the folder does not: cuisine, diet, the main ingredient when
+the folder does not name it, method (`sheet-pan`, `smoker`), and occasion
+(`weeknight`, `thanksgiving`). They come from
+[`tools/tags.txt`](tools/tags.txt), and the checker warns on one that is not
+there. Add a tag to that file when it is meant; never tag a recipe with its own
+name or its folder.
+
+Moving a recipe to another folder is fine: Kitchen ERP follows the move. Commit
+a move on its own, without editing the file in the same commit, so the move is
+recognised by its unchanged content as well as by git.
+
+### Photos
+
+A photo of the finished dish goes beside the recipe with the same name:
+`olive-oil-cake.jpg` beside `olive-oil-cake.cook`. A photo for step 3 is
+`olive-oil-cake.3.jpg`. JPEG or WebP, at most 256 KB and 1600 px on the long
+side.
+
+A phone writes where and when a photo was taken into the file. The checker
+refuses any photo that still carries that block, and `make strip-images`
+removes it. What no check can see is the picture itself, so look at it before
+you commit: a window, a face, a letter on the counter.
 
 ## Before you commit
 

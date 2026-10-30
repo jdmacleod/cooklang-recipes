@@ -14,6 +14,12 @@ setup:  ## Install the git hooks and create private/
 check-recipes:  ## Parse every recipe and validate its front matter
 	$(PY) -m tools.check_recipes
 
+check-images:  ## Check recipe photos: no metadata, small, beside their recipe
+	$(PY) -m tools.check_images
+
+strip-images:  ## Remove EXIF, XMP, IPTC and comments from every recipe photo
+	$(PY) -m tools.check_images --strip
+
 check-personal:  ## Scan for names, contacts, addresses, and private links
 	$(PY) -m tools.scan_personal
 
@@ -32,6 +38,7 @@ denylist:  ## Regenerate tools/denylist.hashes from tools/denylist.txt
 check:  ## Everything CI runs
 	$(PY) -m tools.denylist --self-test
 	$(PY) -m tools.check_recipes
+	$(PY) -m tools.check_images
 	$(PY) -m tools.check_links
 	$(PY) -m tools.scan_personal
 	pre-commit run --all-files

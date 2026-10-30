@@ -56,24 +56,33 @@ jobs:
             echo "Tracked files under private/:"; echo "$tracked"; exit 1
           fi
 
+      - name: Check recipe photos
+        # The household's own photos, beside their recipe: no EXIF, XMP or
+        # IPTC block (a phone writes the kitchen's coordinates into one), a
+        # sibling .cook, and small enough to keep the repository a text one.
+        run: python -m tools.check_images
+
       - name: Refuse image and export files
         run: |
           # Mirrors the denials in .gitignore. A photograph of a dish is a
-          # photograph of a kitchen, and no scanner can read pixels.
+          # photograph of a kitchen, and no scanner can read pixels, so the
+          # only photos allowed are the checked ones beside a recipe.
           stray=$(git ls-files \
             '*.png' '*.jpg' '*.jpeg' '*.heic' '*.heif' '*.webp' '*.gif' \
             '*.tif' '*.tiff' '*.bmp' '*.pdf' \
             '*.csv' '*.tsv' '*.xls' '*.xlsx' '*.zip' '*.tar' '*.tar.gz' '*.tgz' \
             '*.json' '*.sqlite' '*.sqlite3' '*.db' \
-            '*.paprikarecipes' '*.paprikarecipe' '*.mxp' '*.mx2' || true)
+            '*.paprikarecipes' '*.paprikarecipe' '*.mxp' '*.mx2' \
+            ':!:recipes/**/*.jpg' ':!:recipes/**/*.webp' || true)
           if [ -n "$stray" ]; then
             echo "Data-shaped files committed:"; echo "$stray"; exit 1
           fi
 
       - name: Refuse re-inclusions in .gitignore
         run: |
-          # There are none, and adding one is the whole failure mode.
-          bad=$(grep -E '^!' .gitignore || true)
+          # The two photo lines are the only ones, and adding another is the
+          # whole failure mode.
+          bad=$(grep -E '^!' .gitignore | grep -vxF -e '!/recipes/**/*.jpg' -e '!/recipes/**/*.webp' || true)
           if [ -n "$bad" ]; then
             echo "Unexpected re-inclusion in .gitignore:"; echo "$bad"; exit 1
           fi
