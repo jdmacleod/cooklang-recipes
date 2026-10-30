@@ -106,10 +106,18 @@ commit with `--no-verify`.
 
 ## Photographs
 
-Every image format is denied in `.gitignore`. No scanner can read pixels, and a
-photograph of a finished dish on a kitchen table is a photograph of a kitchen,
-usually with a window and often with a person in it. If this repository ever
-wants images, the denial is lifted with a check attached — not quietly.
+Every image format is denied in `.gitignore`, with one exception: the
+household's own photo of a dish, as a `.jpg` or `.webp` beside its recipe under
+`recipes/`. That exception has a check attached, `tools/check_images.py`, run by
+the pre-commit hook and in CI. It refuses a photo that carries an EXIF, XMP,
+IPTC or comment block, which is where a phone writes the kitchen's GPS
+position, the time and the device, along with any photo with no recipe beside it
+or over 256 KB. `make strip-images` removes those blocks.
+
+No scanner can read pixels, and a photograph of a finished dish on a kitchen
+table is a photograph of a kitchen, usually with a window and often with a
+person in it. Look at a photo before committing it, crop it to the plate, and
+never commit one with a person in it.
 
 ## Git remembers
 

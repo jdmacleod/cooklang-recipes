@@ -5,7 +5,8 @@ repos:
     rev: v6.0.0
     hooks:
       - id: check-added-large-files
-        # Nothing here is legitimately large. A photograph is.
+        # Nothing here is legitimately large. A photograph is, so a recipe's
+        # photo has to be exported small (tools/check_images.py, same limit).
         args: ["--maxkb=256"]
       - id: check-merge-conflict
       - id: end-of-file-fixer
@@ -48,6 +49,13 @@ repos:
         entry: python3 -m tools.check_recipes
         language: system
         files: \.cook$
+        pass_filenames: true
+
+      - id: check-images
+        name: check recipe photos for metadata, size and a recipe beside them
+        entry: python3 -m tools.check_images
+        language: system
+        files: \.(jpe?g|webp|png|heic)$
         pass_filenames: true
 
       - id: scan-personal

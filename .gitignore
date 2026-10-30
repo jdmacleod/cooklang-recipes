@@ -16,7 +16,11 @@
 tools/denylist.txt
 tools/denylist.salt
 
-# Photographs. A picture of a dish on a kitchen table shows the kitchen.
+# Photographs. A picture of a dish on a kitchen table shows the kitchen, and the
+# file a camera writes says where the kitchen is. The household's own photos of
+# its own dishes are the one exception: a .jpg or .webp beside its recipe under
+# recipes/, checked by tools/check_images.py for metadata, size and a sibling
+# recipe before every commit and in CI. Nothing else is re-included.
 *.png
 *.jpg
 *.jpeg
@@ -28,11 +32,13 @@ tools/denylist.salt
 *.tiff
 *.bmp
 *.pdf
+!/recipes/**/*.jpg
+!/recipes/**/*.webp
 
 # Exports and scrapes from recipe apps, which arrive full of personal notes.
 # Note the breadth of *.json: the Markdown linter's config is therefore called
-# .pymarkdown, with no extension, so that it stays tracked. There are no
-# re-inclusions in this file and CI fails if one appears.
+# .pymarkdown, with no extension, so that it stays tracked. The two photo
+# lines above are the only re-inclusions, and CI fails if another appears.
 *.csv
 *.tsv
 *.xls

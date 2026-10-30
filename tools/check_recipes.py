@@ -38,7 +38,13 @@ RECIPES_DIR = REPO_ROOT / "recipes"
 REQUIRED = ("title", "source")
 KNOWN_KEYS = {
     "title", "source", "servings", "tags", "notes", "course", "time", "author",
+    "cuisine", "yield", "nutrition",
 }
+
+# Tags come from a short vocabulary so that the same idea is spelled one way.
+# An unknown tag is a warning, not a failure: add it to tools/tags.txt if it is
+# meant, and the next recipe that wants it finds it there.
+TAGS_FILE = Path(__file__).resolve().parent / "tags.txt"
 
 # Phrases that mean "this one is ours". Anything else in `source` is read as an
 # attribution to someone else, and has to name them.
@@ -86,7 +92,8 @@ def split_front_matter(text: str, path: str) -> tuple[list[str], int, list[Probl
 
 
 def parse_front_matter(lines: list[str], path: str, offset: int = 2) -> tuple[dict, list[Problem]]:
-    """A documented subset of YAML: scalars, inline lists, folded/literal blocks."""
+    """A documented subset of YAML: scalars, inline lists, folded/literal blocks,
+    and one level of `key: value` lines indented under a key with no value."""
     data: dict[str, object] = {}
     problems: list[Problem] = []
     i = 0
@@ -109,6 +116,18 @@ def parse_front_matter(lines: list[str], path: str, offset: int = 2) -> tuple[di
         value = value.strip()
         if key in data:
             problems.append(Problem(path, lineno, f"duplicate key {key!r}"))
+        if not value and i + 1 < len(lines) and lines[i + 1][:1].isspace():
+            mapping: dict[str, str] = {}
+            i += 1
+            while i < len(lines) and (not lines[i].strip() or lines[i][:1].isspace()):
+                inner_key, inner_sep, inner_value = lines[i].strip().partition(":")
+                if lines[i].strip() and not inner_sep:
+                    problems.append(Problem(path, offset + i, f"not a `key: value` line under {key!r}"))
+                elif lines[i].strip():
+                    mapping[inner_key.strip()] = inner_value.strip().strip("'\"")
+                i += 1
+            data[key] = mapping
+            continue
         if value in (">-", ">", "|", "|-"):
             block: list[str] = []
             i += 1
@@ -164,11 +183,38 @@ def check_front_matter(data: dict, path: str) -> list[Problem]:
         problems.append(Problem(path, 1, "tags must be an inline list, e.g. [quick, vegetarian]"))
 
     for key in data:
-        if key not in KNOWN_KEYS:
+        if key == "image":
+            problems.append(
+                Problem(
+                    path,
+                    1,
+                    "image: points at someone else's photograph. Put your own photo "
+                    "beside the recipe as the same name with .jpg instead. See CONTRIBUTING.md.",
+                )
+            )
+        elif key not in KNOWN_KEYS:
             problems.append(
                 Problem(path, 1, f"unknown front-matter key {key!r}; add it to KNOWN_KEYS if intended")
             )
     return problems
+
+
+def load_tags() -> frozenset[str]:
+    if not TAGS_FILE.exists():
+        return frozenset()
+    words = (line.split("#", 1)[0].strip() for line in TAGS_FILE.read_text(encoding="utf-8").splitlines())
+    return frozenset(w for w in words if w)
+
+
+def tag_warnings(data: dict, path: str, known: frozenset[str]) -> list[Problem]:
+    tags = data.get("tags")
+    if not known or not isinstance(tags, list):
+        return []
+    return [
+        Problem(path, 1, f"tag {tag!r} is not in tools/tags.txt; add it there if it is meant")
+        for tag in tags
+        if tag.lower() not in known
+    ]
 
 
 def check_body(body: str, path: str, offset: int) -> list[Problem]:
@@ -207,7 +253,7 @@ def check_body(body: str, path: str, offset: int) -> list[Problem]:
     return problems
 
 
-def check_file(path: Path) -> list[Problem]:
+def check_file(path: Path, warnings: list[Problem] | None = None) -> list[Problem]:
     rel = str(path.relative_to(REPO_ROOT))
     text = path.read_text(encoding="utf-8", errors="replace")
     fm_lines, body_start, problems = split_front_matter(text, rel)
@@ -216,6 +262,8 @@ def check_file(path: Path) -> list[Problem]:
     data, fm_problems = parse_front_matter(fm_lines, rel)
     problems += fm_problems
     problems += check_front_matter(data, rel)
+    if warnings is not None:
+        warnings += tag_warnings(data, rel, load_tags())
     body = "\n".join(text.splitlines()[body_start - 1 :])
     problems += check_body(body, rel, body_start)
     if not body.strip():
@@ -240,9 +288,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
 
     problems: list[Problem] = []
+    warnings: list[Problem] = []
     for path in paths:
-        problems += check_file(path)
+        problems += check_file(path, warnings)
 
+    for w in warnings:
+        print(f"warning: {w.render()}")
     if not problems:
         print(f"check_recipes: {len(paths)} recipe(s) OK")
         return 0
