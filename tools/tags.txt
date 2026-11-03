@@ -7,13 +7,17 @@
 
 # Cuisine. A recipe's single main cuisine also goes in `cuisine:`.
 american
+british
+canadian
 chinese
 ethiopian
 french
 greek
 indian
+irish
 italian
 japanese
+jewish
 korean
 lao
 lebanese
@@ -84,3 +88,4 @@ sparkling
 tequila
 vodka
 whiskey
+wine
