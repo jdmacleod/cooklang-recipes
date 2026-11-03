@@ -235,6 +235,11 @@ def check_body(body: str, path: str, offset: int) -> list[Problem]:
                 body_text = m.group("body")
                 if kind != "timer" and not name:
                     problems.append(Problem(path, n, f"{kind} with an empty name: {m.group(0)!r}"))
+                # Kitchen ERP's parser, like cooklang-rs, wants a note closed on its own line.
+                if kind == "ingredient" and line[m.end() : m.end() + 1] == "(" and ")" not in line[m.end() :]:
+                    problems.append(
+                        Problem(path, n, f"the note after {m.group(0)!r} is never closed on this line")
+                    )
                 if body_text is None:
                     continue
                 if body_text.strip() == "":

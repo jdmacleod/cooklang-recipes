@@ -21,6 +21,7 @@ mediterranean
 mexican
 middle eastern
 sichuan
+spanish
 thai
 
 # Diet

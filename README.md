@@ -64,7 +64,8 @@ recipes/
   basics/         eggs, dressings, stocks, doughs: what other recipes use
   breakfast/
   cocktails/
-  mains/          meat/ pasta/ pizza/ poultry/ sandwiches/ seafood/ thai/
+  desserts/       not baked: tiramisu, puddings, ice cream
+  mains/          meat/ pasta/ pizza/ poultry/ sandwiches/ seafood/ thai/ vegetarian/
   sauces/
   sides/
   soups/          soups, stews and chilis
